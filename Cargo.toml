@@ -1,6 +1,6 @@
 [package]
 name = "kolorz"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A silly little library for printing colored text to the terminal "
 repository = "https://github.com/dotzenith/kolorz.rs"

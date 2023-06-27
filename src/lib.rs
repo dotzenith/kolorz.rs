@@ -1,6 +1,6 @@
-//! A silly little library for printing colored text to the terminal 
+//! A silly little library for printing colored text to the terminal
 //!
-//! # Usage
+//! ## Installation
 //!
 //! Add kolorz to your project's `Cargo.toml`:
 //!
@@ -9,9 +9,10 @@
 #![doc = concat!("kolorz = \"", env!("CARGO_PKG_VERSION"), "\"")]
 //! ```
 //!
-//! # Basic Usage
+//! ## Basic Usage
 //!
 //! ```rust
+//! // print colored text
 //! use kolorz::get_colorscheme;
 //!
 //! fn main() {
@@ -20,7 +21,16 @@
 //! }
 //! ```
 //!
-//! # The following colorschemes are available:
+//! ```rust
+//! // get an array of all available colorschemes
+//! use kolorz::get_all_colorschemes;
+//!
+//! fn main() {
+//!     let colorschemes = get_all_colorschemes();
+//! }
+//! ```
+//!
+//! ## The following colorschemes are available:
 //!
 //! - catppuccin latte
 //! - catppuccin frappe
@@ -35,7 +45,7 @@
 //! - palenight
 //! - gogh
 //!
-//! # The following colors are available on all of the colorschemes:
+//! ## The following colors are available on all of the colorschemes:
 //!
 //! - red
 //! - purple
@@ -43,6 +53,23 @@
 //! - orange
 //! - yellow
 //! - white
+
+pub fn get_all_colorschemes() -> [&'static str; 12] {
+    [
+        "catppuccin latte",
+        "catppuccin frappe",
+        "catppuccin macchiato",
+        "catppuccin mocha",
+        "dracula",
+        "nord",
+        "gruvbox",
+        "onedark",
+        "tokynight",
+        "ayu",
+        "palenight",
+        "gogh",
+    ]
+}
 
 pub fn get_colorscheme(str: &str) -> crate::Color {
     match str {

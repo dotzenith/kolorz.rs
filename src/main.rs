@@ -1,20 +1,7 @@
-use kolorz::get_colorscheme;
+use kolorz::{get_all_colorschemes, get_colorscheme};
 
 fn main() {
-    let colorschemes = [
-        "catppuccin latte",
-        "catppuccin frappe",
-        "catppuccin macchiato",
-        "catppuccin mocha",
-        "dracula",
-        "nord",
-        "gruvbox",
-        "onedark",
-        "tokynight",
-        "ayu",
-        "palenight",
-        "gogh",
-    ];
+    let colorschemes = get_all_colorschemes();
 
     for colorscheme in colorschemes.iter() {
         let cur = get_colorscheme(colorscheme);

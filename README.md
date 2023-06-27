@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.1.0"
+kolorz = "0.2.0"
 ```
 
 ---
@@ -38,11 +38,21 @@ kolorz = "0.1.0"
 ### ❖ Basic Usage
 
 ```rust
+// print colored text
 use kolorz::get_colorscheme;
 
 fn main() {
     let mocha = get_colorscheme("catppuccin mocha");
     println!("{}", mocha.red("This is red"));
+}
+```
+
+```rust
+// get an array of all available colorschemes
+use kolorz::get_all_colorschemes;
+
+fn main() {
+    let colorschemes = get_all_colorschemes();
 }
 ```
 
@@ -77,7 +87,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.1.0 - Initial release
+0.2.0 - Added a helper function to get an array of all colorschemes
 
 ---
 
