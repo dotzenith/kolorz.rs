@@ -1,10 +1,10 @@
-use kolorz::{get_all_colorschemes, get_colorscheme};
+use kolorz::Kolor;
 
 fn main() {
-    let colorschemes = get_all_colorschemes();
+    let colorschemes = Kolor::get_all_kolorschemes();
 
     for colorscheme in colorschemes.iter() {
-        let cur = get_colorscheme(colorscheme);
+        let cur = Kolor::new(colorscheme);
         println!("{}", colorscheme);
         println!("{}", cur.red("red"));
         println!("{}", cur.purple("purple"));

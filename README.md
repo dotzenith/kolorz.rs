@@ -20,7 +20,7 @@
 
 ### ❖ Information
 
-kolorz is a silly little library for printing colored text to the terminal 
+kolorz is a silly little library for printing kolored text to the terminal 
 
 ---
 
@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.2.0"
+kolorz = "0.3.0"
 ```
 
 ---
@@ -38,27 +38,27 @@ kolorz = "0.2.0"
 ### ❖ Basic Usage
 
 ```rust
-// print colored text
-use kolorz::get_colorscheme;
+// print kolored text
+use kolorz::Kolor;
 
 fn main() {
-    let mocha = get_colorscheme("catppuccin mocha");
+    let mocha = Kolor::new("catppuccin mocha");
     println!("{}", mocha.red("This is red"));
 }
 ```
 
 ```rust
-// get an array of all available colorschemes
-use kolorz::get_all_colorschemes;
+// get an array of all available kolorschemes
+use kolorz::Kolor;
 
 fn main() {
-    let colorschemes = get_all_colorschemes();
+    let kolorschemes = Kolor::get_all_kolorschemes();
 }
 ```
 
 ---
  
-### ❖ The following colorschemes are available:
+### ❖ The following kolorschemes are available:
 
 - catppuccin latte
 - catppuccin frappe
@@ -75,7 +75,7 @@ fn main() {
 
 ---
 
-### ❖ The following colors are available on all of the colorschemes:
+### ❖ The following kolors are available on all of the kolorschemes:
 
 - red
 - purple
@@ -87,7 +87,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.2.0 - Added a helper function to get an array of all colorschemes
+0.3.0 - Move towards a cleaner API
 
 ---
 
