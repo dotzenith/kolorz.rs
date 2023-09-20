@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.3.0"
+kolorz = "0.4.0"
 ```
 
 ---
@@ -82,12 +82,12 @@ fn main() {
 - blue
 - orange
 - yellow
-- white
+- text (usually white on dark kolorschemes)
 
 ---
 
 ### ❖ What's New? 
-0.3.0 - Move towards a cleaner API
+0.4.0 - Change "white" to "text" to accommodate light kolorschemes
 
 ---
 

@@ -5,13 +5,16 @@ fn main() {
 
     for colorscheme in colorschemes.iter() {
         let cur = Kolor::new(colorscheme);
-        println!("{}", colorscheme);
-        println!("{}", cur.red("red"));
-        println!("{}", cur.purple("purple"));
-        println!("{}", cur.blue("blue"));
-        println!("{}", cur.green("green"));
-        println!("{}", cur.orange("orange"));
-        println!("{}", cur.yellow("yellow"));
-        println!("{}", cur.white("white\n"));
+        println!("{colorscheme}");
+        println!(
+            "{} {} {} {} {} {} {}",
+            cur.red("red"),
+            cur.purple("purple"),
+            cur.blue("blue"),
+            cur.green("green"),
+            cur.orange("orange"),
+            cur.yellow("yellow"),
+            cur.text("text\n")
+        );
     }
 }

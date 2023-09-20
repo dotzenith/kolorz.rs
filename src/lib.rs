@@ -52,7 +52,7 @@
 //! - blue
 //! - orange
 //! - yellow
-//! - white
+//! - text (usually white for dark kolorschemes)
 
 #[derive(Clone, Copy)]
 pub struct Kolor {
@@ -62,7 +62,7 @@ pub struct Kolor {
     green: (u8, u8, u8),
     orange: (u8, u8, u8),
     yellow: (u8, u8, u8),
-    white: (u8, u8, u8),
+    text: (u8, u8, u8),
 }
 
 impl Kolor {
@@ -75,7 +75,7 @@ impl Kolor {
                 green: (64, 160, 43),
                 orange: (254, 100, 11),
                 yellow: (223, 142, 29),
-                white: (204, 208, 218),
+                text: (204, 208, 218),
             },
             "catppuccin frappe" => Kolor {
                 red: (231, 130, 132),
@@ -84,7 +84,7 @@ impl Kolor {
                 green: (166, 209, 137),
                 orange: (239, 159, 118),
                 yellow: (229, 200, 144),
-                white: (198, 208, 245),
+                text: (198, 208, 245),
             },
             "catppuccin macchiato" => Kolor {
                 red: (237, 135, 150),
@@ -93,7 +93,7 @@ impl Kolor {
                 green: (166, 218, 149),
                 orange: (245, 169, 127),
                 yellow: (238, 212, 159),
-                white: (202, 211, 245),
+                text: (202, 211, 245),
             },
             "catppuccin mocha" => Kolor {
                 red: (243, 139, 168),
@@ -102,7 +102,7 @@ impl Kolor {
                 green: (166, 227, 161),
                 orange: (250, 179, 135),
                 yellow: (249, 226, 175),
-                white: (205, 214, 244),
+                text: (205, 214, 244),
             },
             "dracula" => Kolor {
                 red: (255, 85, 85),
@@ -111,7 +111,7 @@ impl Kolor {
                 green: (80, 250, 123),
                 orange: (255, 184, 108),
                 yellow: (241, 250, 140),
-                white: (248, 248, 242),
+                text: (248, 248, 242),
             },
             "nord" => Kolor {
                 red: (191, 97, 106),
@@ -120,7 +120,7 @@ impl Kolor {
                 green: (163, 190, 140),
                 orange: (208, 135, 112),
                 yellow: (235, 203, 139),
-                white: (236, 239, 244),
+                text: (236, 239, 244),
             },
             "gruvbox" => Kolor {
                 red: (251, 73, 52),
@@ -129,7 +129,7 @@ impl Kolor {
                 green: (184, 187, 38),
                 orange: (254, 128, 25),
                 yellow: (250, 189, 47),
-                white: (235, 219, 178),
+                text: (235, 219, 178),
             },
             "onedark" => Kolor {
                 red: (224, 108, 117),
@@ -138,7 +138,7 @@ impl Kolor {
                 green: (152, 195, 121),
                 orange: (209, 154, 102),
                 yellow: (229, 192, 123),
-                white: (171, 178, 191),
+                text: (171, 178, 191),
             },
             "tokyonight" => Kolor {
                 red: (247, 118, 142),
@@ -147,7 +147,7 @@ impl Kolor {
                 green: (158, 206, 106),
                 orange: (255, 158, 100),
                 yellow: (224, 175, 104),
-                white: (169, 177, 214),
+                text: (169, 177, 214),
             },
             "ayu" => Kolor {
                 red: (255, 51, 51),
@@ -156,7 +156,7 @@ impl Kolor {
                 green: (186, 230, 126),
                 orange: (255, 167, 89),
                 yellow: (255, 238, 153),
-                white: (203, 204, 198),
+                text: (203, 204, 198),
             },
             "palenight" => Kolor {
                 red: (255, 85, 114),
@@ -165,7 +165,7 @@ impl Kolor {
                 green: (195, 232, 141),
                 orange: (240, 113, 120),
                 yellow: (255, 203, 107),
-                white: (255, 254, 254),
+                text: (255, 254, 254),
             },
             "gogh" => Kolor {
                 red: (255, 85, 114),
@@ -174,7 +174,7 @@ impl Kolor {
                 green: (98, 222, 132),
                 orange: (240, 113, 120),
                 yellow: (255, 203, 107),
-                white: (255, 254, 254),
+                text: (255, 254, 254),
             },
             _ => Kolor {
                 red: (243, 139, 168),
@@ -183,7 +183,7 @@ impl Kolor {
                 green: (166, 227, 161),
                 orange: (250, 179, 135),
                 yellow: (249, 226, 175),
-                white: (205, 214, 244),
+                text: (205, 214, 244),
             },
         }
     }
@@ -239,10 +239,10 @@ impl Kolor {
             self.yellow.0, self.yellow.1, self.yellow.2, str
         );
     }
-    pub fn white(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn text(&self, str: impl std::fmt::Display + Into<String>) -> String {
         return format!(
             "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.white.0, self.white.1, self.white.2, str
+            self.text.0, self.text.1, self.text.2, str
         );
     }
 }
