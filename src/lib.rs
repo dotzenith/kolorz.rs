@@ -197,7 +197,7 @@ impl Kolor {
             "nord",
             "gruvbox",
             "onedark",
-            "tokynight",
+            "tokyonight",
             "ayu",
             "palenight",
             "gogh",

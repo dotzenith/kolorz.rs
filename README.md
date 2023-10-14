@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.4.0"
+kolorz = "0.4.1"
 ```
 
 ---
