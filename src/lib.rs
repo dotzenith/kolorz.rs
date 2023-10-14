@@ -203,46 +203,28 @@ impl Kolor {
             "gogh",
         ]
     }
+    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8))  -> String {
+        format!("\x1b[38;2;{};{};{}m{}\x1b[0m", colors.0, colors.1, colors.2, str)
+    }
     pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.red.0, self.red.1, self.red.2, str
-        );
+        Self::kolorize(str, self.red)
     }
     pub fn purple(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.purple.0, self.purple.1, self.purple.2, str
-        );
+        Self::kolorize(str, self.purple)
     }
     pub fn blue(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.blue.0, self.blue.1, self.blue.2, str
-        );
+        Self::kolorize(str, self.blue)
     }
     pub fn green(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.green.0, self.green.1, self.green.2, str
-        );
+        Self::kolorize(str, self.green)
     }
     pub fn orange(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.orange.0, self.orange.1, self.orange.2, str
-        );
+        Self::kolorize(str, self.orange)
     }
     pub fn yellow(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.yellow.0, self.yellow.1, self.yellow.2, str
-        );
+        Self::kolorize(str, self.yellow)
     }
     pub fn text(&self, str: impl std::fmt::Display + Into<String>) -> String {
-        return format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            self.text.0, self.text.1, self.text.2, str
-        );
+        Self::kolorize(str, self.text)
     }
 }

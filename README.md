@@ -87,7 +87,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.4.0 - Change "white" to "text" to accommodate light kolorschemes
+0.4.1 - Abstracted duplicate code into private method
 
 ---
 
