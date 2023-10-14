@@ -21,15 +21,6 @@
 //! }
 //! ```
 //!
-//! ```rust
-//! // get an array of all available kolorscheme names
-//! use kolorz::Kolor;
-//!
-//! fn main() {
-//!     let kolorschemes = Kolor::get_all_kolorschemes();
-//! }
-//! ```
-//!
 //! ## The following kolorschemes are available:
 //!
 //! - catppuccin latte
@@ -65,10 +56,55 @@ pub struct Kolor {
     text: (u8, u8, u8),
 }
 
-impl Kolor {
-    pub fn new(str: &str) -> crate::Kolor {
-        match str {
-            "catppuccin latte" => Kolor {
+#[derive(Clone, Copy, Debug)]
+pub enum KolorScheme {
+    CatppuccinLatte,
+    CatppuccinFrappe,
+    CatppuccinMacchiato,
+    CatppuccinMocha,
+    Dracula,
+    Nord,
+    Gruvbox,
+    OneDark,
+    TokyoNight,
+    Ayu,
+    PaleNight,
+    Gogh,
+}
+impl Default for KolorScheme {
+    fn default() -> Self {
+        Self::CatppuccinMocha
+    }
+}
+impl From<&KolorScheme> for KolorScheme {
+    fn from(kolorscheme: &KolorScheme) -> Self {
+        kolorscheme.clone()
+    }
+}
+impl From<&str> for KolorScheme {
+    fn from(s: &str) -> Self {
+        match s {
+            "catppuccin latte" => Self::CatppuccinLatte,
+            "catppuccin frappe" => Self::CatppuccinFrappe,
+            "catppuccin macchiato" => Self::CatppuccinMacchiato,
+            "catppuccin mocha" => Self::CatppuccinMocha,
+            "dracula" => Self::Dracula,
+            "nord" => Self::Nord,
+            "gruvbox" => Self::Gruvbox,
+            "onedark" => Self::OneDark,
+            "tokyonight" => Self::TokyoNight,
+            "ayu" => Self::Ayu,
+            "palenight" => Self::PaleNight,
+            "gogh" => Self::Gogh,
+            _ => Default::default()
+        }
+    }
+}
+
+impl From<KolorScheme> for Kolor {
+    fn from(kolorscheme: KolorScheme) -> Self {
+        match kolorscheme {
+            KolorScheme::CatppuccinLatte => Kolor {
                 red: (210, 15, 57),
                 purple: (136, 57, 239),
                 blue: (30, 102, 245),
@@ -77,7 +113,7 @@ impl Kolor {
                 yellow: (223, 142, 29),
                 text: (204, 208, 218),
             },
-            "catppuccin frappe" => Kolor {
+            KolorScheme::CatppuccinFrappe => Kolor {
                 red: (231, 130, 132),
                 purple: (202, 158, 230),
                 blue: (140, 170, 238),
@@ -86,7 +122,7 @@ impl Kolor {
                 yellow: (229, 200, 144),
                 text: (198, 208, 245),
             },
-            "catppuccin macchiato" => Kolor {
+            KolorScheme::CatppuccinMacchiato => Kolor {
                 red: (237, 135, 150),
                 purple: (198, 160, 246),
                 blue: (138, 173, 244),
@@ -95,7 +131,7 @@ impl Kolor {
                 yellow: (238, 212, 159),
                 text: (202, 211, 245),
             },
-            "catppuccin mocha" => Kolor {
+            KolorScheme::CatppuccinMocha => Kolor {
                 red: (243, 139, 168),
                 purple: (203, 166, 247),
                 blue: (137, 180, 250),
@@ -104,7 +140,7 @@ impl Kolor {
                 yellow: (249, 226, 175),
                 text: (205, 214, 244),
             },
-            "dracula" => Kolor {
+            KolorScheme::Dracula => Kolor {
                 red: (255, 85, 85),
                 purple: (189, 147, 249),
                 blue: (139, 233, 253),
@@ -113,7 +149,7 @@ impl Kolor {
                 yellow: (241, 250, 140),
                 text: (248, 248, 242),
             },
-            "nord" => Kolor {
+            KolorScheme::Nord => Kolor {
                 red: (191, 97, 106),
                 purple: (180, 142, 173),
                 blue: (136, 192, 208),
@@ -122,7 +158,7 @@ impl Kolor {
                 yellow: (235, 203, 139),
                 text: (236, 239, 244),
             },
-            "gruvbox" => Kolor {
+            KolorScheme::Gruvbox => Kolor {
                 red: (251, 73, 52),
                 purple: (211, 134, 155),
                 blue: (131, 165, 152),
@@ -131,7 +167,7 @@ impl Kolor {
                 yellow: (250, 189, 47),
                 text: (235, 219, 178),
             },
-            "onedark" => Kolor {
+            KolorScheme::OneDark => Kolor {
                 red: (224, 108, 117),
                 purple: (198, 120, 221),
                 blue: (97, 175, 239),
@@ -140,7 +176,7 @@ impl Kolor {
                 yellow: (229, 192, 123),
                 text: (171, 178, 191),
             },
-            "tokyonight" => Kolor {
+            KolorScheme::TokyoNight => Kolor {
                 red: (247, 118, 142),
                 purple: (173, 142, 230),
                 blue: (122, 162, 247),
@@ -149,7 +185,7 @@ impl Kolor {
                 yellow: (224, 175, 104),
                 text: (169, 177, 214),
             },
-            "ayu" => Kolor {
+            KolorScheme::Ayu => Kolor {
                 red: (255, 51, 51),
                 purple: (212, 191, 255),
                 blue: (115, 208, 255),
@@ -158,7 +194,7 @@ impl Kolor {
                 yellow: (255, 238, 153),
                 text: (203, 204, 198),
             },
-            "palenight" => Kolor {
+            KolorScheme::PaleNight => Kolor {
                 red: (255, 85, 114),
                 purple: (199, 146, 234),
                 blue: (96, 173, 236),
@@ -167,7 +203,7 @@ impl Kolor {
                 yellow: (255, 203, 107),
                 text: (255, 254, 254),
             },
-            "gogh" => Kolor {
+            KolorScheme::Gogh => Kolor {
                 red: (255, 85, 114),
                 purple: (245, 128, 255),
                 blue: (117, 161, 255),
@@ -176,32 +212,13 @@ impl Kolor {
                 yellow: (255, 203, 107),
                 text: (255, 254, 254),
             },
-            _ => Kolor {
-                red: (243, 139, 168),
-                purple: (203, 166, 247),
-                blue: (137, 180, 250),
-                green: (166, 227, 161),
-                orange: (250, 179, 135),
-                yellow: (249, 226, 175),
-                text: (205, 214, 244),
-            },
         }
     }
-    pub fn get_all_kolorschemes() -> [&'static str; 12] {
-        [
-            "catppuccin latte",
-            "catppuccin frappe",
-            "catppuccin macchiato",
-            "catppuccin mocha",
-            "dracula",
-            "nord",
-            "gruvbox",
-            "onedark",
-            "tokynight",
-            "ayu",
-            "palenight",
-            "gogh",
-        ]
+}
+
+impl Kolor {
+    pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
+        Kolor::from(scheme.into())
     }
     pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> String {
         return format!(
