@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.4.0"
+kolorz = "0.4.1"
 ```
 
 ---
@@ -87,7 +87,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.4.0 - Change "white" to "text" to accommodate light kolorschemes
+0.4.1 - Abstracted duplicate code into private method
 
 ---
 
