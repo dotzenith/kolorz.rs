@@ -38,12 +38,15 @@
 //! - catppuccin mocha
 //! - dracula
 //! - nord
-//! - gruvbox
+//! - gruvbox dark
+//! - gruvbox light
 //! - onedark
 //! - tokyonight
 //! - ayu
 //! - palenight
 //! - gogh
+//! - biscuit dark
+//! - biscuit light
 //!
 //! ## The following colors are available on all of the kolorschemes:
 //!
@@ -122,14 +125,23 @@ impl Kolor {
                 yellow: (235, 203, 139),
                 text: (236, 239, 244),
             },
-            "gruvbox" => Kolor {
+            "gruvbox_dark" => Kolor {
                 red: (251, 73, 52),
-                purple: (211, 134, 155),
+                purple: (177, 98, 134),
                 blue: (131, 165, 152),
-                green: (184, 187, 38),
-                orange: (254, 128, 25),
+                green: (152, 151, 26),
+                orange: (214, 93, 14),
                 yellow: (250, 189, 47),
                 text: (235, 219, 178),
+            },
+            "gruvbox_light" => Kolor {
+                red: (204, 36, 29),
+                purple: (211, 134, 155),
+                blue: (69, 133, 136),
+                green: (184, 187, 38),
+                orange: (254, 128, 25),
+                yellow: (215, 153, 33),
+                text: (60, 56, 54),
             },
             "onedark" => Kolor {
                 red: (224, 108, 117),
@@ -176,6 +188,24 @@ impl Kolor {
                 yellow: (255, 203, 107),
                 text: (255, 254, 254),
             },
+            "biscuit_dark" => Kolor {
+                red: (207, 34, 56),
+                purple: (123, 61, 121),
+                blue: (124, 138, 126),
+                green: (150, 143, 107),
+                orange: (240, 104, 66),
+                yellow: (227, 137, 69),
+                text: (255, 233, 199),
+            },
+            "biscuit_light" => Kolor {
+                red: (174, 71, 80),
+                purple: (131, 84, 107),
+                blue: (122, 127, 127),
+                green: (151, 145, 111),
+                orange: (198, 105, 93),
+                yellow: (205, 145, 101),
+                text: (255, 233, 199),
+            },
             _ => Kolor {
                 red: (243, 139, 168),
                 purple: (203, 166, 247),
@@ -195,12 +225,15 @@ impl Kolor {
             "catppuccin mocha",
             "dracula",
             "nord",
-            "gruvbox",
+            "gruvbox_dark",
+            "gruvbox_light",
             "onedark",
             "tokyonight",
             "ayu",
             "palenight",
             "gogh",
+            "biscuit_dark",
+            "biscuit_light",
         ]
     }
     fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8))  -> String {
