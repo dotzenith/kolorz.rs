@@ -96,7 +96,7 @@ impl From<&str> for KolorScheme {
             "ayu" => Self::Ayu,
             "palenight" => Self::PaleNight,
             "gogh" => Self::Gogh,
-            _ => Default::default()
+            _ => Default::default(),
         }
     }
 }
@@ -220,8 +220,11 @@ impl Kolor {
     pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
         Kolor::from(scheme.into())
     }
-    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8))  -> String {
-        format!("\x1b[38;2;{};{};{}m{}\x1b[0m", colors.0, colors.1, colors.2, str)
+    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> String {
+        format!(
+            "\x1b[38;2;{};{};{}m{}\x1b[0m",
+            colors.0, colors.1, colors.2, str
+        )
     }
     pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> String {
         Self::kolorize(str, self.red)

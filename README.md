@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.4.1"
+kolorz = "0.5.0"
 ```
 
 ---
@@ -87,7 +87,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.4.1 - Abstracted duplicate code into private method
+0.5.0 - Use enums instead of &str
 
 ---
 
