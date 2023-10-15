@@ -127,10 +127,10 @@ impl Kolor {
             },
             "gruvbox_dark" => Kolor {
                 red: (251, 73, 52),
-                purple: (177, 98, 134),
+                purple: (211, 134, 155),
                 blue: (131, 165, 152),
-                green: (152, 151, 26),
-                orange: (214, 93, 14),
+                green: (184, 187, 38),
+                orange: (254, 128, 25),
                 yellow: (250, 189, 47),
                 text: (235, 219, 178),
             },
