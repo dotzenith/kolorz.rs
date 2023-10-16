@@ -1,11 +1,25 @@
-use kolorz::Kolor;
+use kolorz::{Kolor, KolorScheme};
+use KolorScheme::*;
 
 fn main() {
-    let colorschemes = Kolor::get_all_kolorschemes();
+    let colorschemes = [
+        CatppuccinLatte,
+        CatppuccinFrappe,
+        CatppuccinMacchiato,
+        CatppuccinMocha,
+        Dracula,
+        Nord,
+        Gruvbox,
+        OneDark,
+        TokyoNight,
+        Ayu,
+        PaleNight,
+        Gogh,
+    ];
 
     for colorscheme in colorschemes.iter() {
         let cur = Kolor::new(colorscheme);
-        println!("{colorscheme}");
+        println!("{:?}", colorscheme);
         println!(
             "{} {} {} {} {} {} {}",
             cur.red("red"),
