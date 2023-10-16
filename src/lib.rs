@@ -21,15 +21,6 @@
 //! }
 //! ```
 //!
-//! ```rust
-//! // get an array of all available kolorscheme names
-//! use kolorz::Kolor;
-//!
-//! fn main() {
-//!     let kolorschemes = Kolor::get_all_kolorschemes();
-//! }
-//! ```
-//!
 //! ## The following kolorschemes are available:
 //!
 //! - catppuccin latte
@@ -38,7 +29,7 @@
 //! - catppuccin mocha
 //! - dracula
 //! - nord
-//! - gruvbox dark
+//! - gruvbox darj
 //! - gruvbox light
 //! - onedark
 //! - tokyonight
@@ -68,10 +59,59 @@ pub struct Kolor {
     text: (u8, u8, u8),
 }
 
-impl Kolor {
-    pub fn new(str: &str) -> crate::Kolor {
-        match str {
-            "catppuccin latte" => Kolor {
+#[derive(Clone, Copy, Debug)]
+pub enum KolorScheme {
+    CatppuccinLatte,
+    CatppuccinFrappe,
+    CatppuccinMacchiato,
+    CatppuccinMocha,
+    Dracula,
+    Nord,
+    GruvboxDark,
+    GruvboxLight,
+    OneDark,
+    TokyoNight,
+    Ayu,
+    PaleNight,
+    Gogh,
+    BiscuitDark,
+    BiscuitLight,
+}
+impl Default for KolorScheme {
+    fn default() -> Self {
+        Self::CatppuccinMocha
+    }
+}
+impl From<&KolorScheme> for KolorScheme {
+    fn from(kolorscheme: &KolorScheme) -> Self {
+        kolorscheme.clone()
+    }
+}
+impl From<&str> for KolorScheme {
+    fn from(s: &str) -> Self {
+        match s {
+            "catppuccin latte" => Self::CatppuccinLatte,
+            "catppuccin frappe" => Self::CatppuccinFrappe,
+            "catppuccin macchiato" => Self::CatppuccinMacchiato,
+            "catppuccin mocha" => Self::CatppuccinMocha,
+            "dracula" => Self::Dracula,
+            "nord" => Self::Nord,
+            "gruvbox dark" => Self::GruvboxDark,
+            "gruvbox light" => Self::GruvboxLight,
+            "onedark" => Self::OneDark,
+            "tokyonight" => Self::TokyoNight,
+            "ayu" => Self::Ayu,
+            "palenight" => Self::PaleNight,
+            "gogh" => Self::Gogh,
+            _ => Default::default(),
+        }
+    }
+}
+
+impl From<KolorScheme> for Kolor {
+    fn from(kolorscheme: KolorScheme) -> Self {
+        match kolorscheme {
+            KolorScheme::CatppuccinLatte => Kolor {
                 red: (210, 15, 57),
                 purple: (136, 57, 239),
                 blue: (30, 102, 245),
@@ -80,7 +120,7 @@ impl Kolor {
                 yellow: (223, 142, 29),
                 text: (204, 208, 218),
             },
-            "catppuccin frappe" => Kolor {
+            KolorScheme::CatppuccinFrappe => Kolor {
                 red: (231, 130, 132),
                 purple: (202, 158, 230),
                 blue: (140, 170, 238),
@@ -89,7 +129,7 @@ impl Kolor {
                 yellow: (229, 200, 144),
                 text: (198, 208, 245),
             },
-            "catppuccin macchiato" => Kolor {
+            KolorScheme::CatppuccinMacchiato => Kolor {
                 red: (237, 135, 150),
                 purple: (198, 160, 246),
                 blue: (138, 173, 244),
@@ -98,7 +138,7 @@ impl Kolor {
                 yellow: (238, 212, 159),
                 text: (202, 211, 245),
             },
-            "catppuccin mocha" => Kolor {
+            KolorScheme::CatppuccinMocha => Kolor {
                 red: (243, 139, 168),
                 purple: (203, 166, 247),
                 blue: (137, 180, 250),
@@ -107,7 +147,7 @@ impl Kolor {
                 yellow: (249, 226, 175),
                 text: (205, 214, 244),
             },
-            "dracula" => Kolor {
+            KolorScheme::Dracula => Kolor {
                 red: (255, 85, 85),
                 purple: (189, 147, 249),
                 blue: (139, 233, 253),
@@ -116,7 +156,7 @@ impl Kolor {
                 yellow: (241, 250, 140),
                 text: (248, 248, 242),
             },
-            "nord" => Kolor {
+            KolorScheme::Nord => Kolor {
                 red: (191, 97, 106),
                 purple: (180, 142, 173),
                 blue: (136, 192, 208),
@@ -125,7 +165,7 @@ impl Kolor {
                 yellow: (235, 203, 139),
                 text: (236, 239, 244),
             },
-            "gruvbox_dark" => Kolor {
+            KolorScheme::GruvboxDark => Kolor {
                 red: (251, 73, 52),
                 purple: (211, 134, 155),
                 blue: (131, 165, 152),
@@ -134,7 +174,7 @@ impl Kolor {
                 yellow: (250, 189, 47),
                 text: (235, 219, 178),
             },
-            "gruvbox_light" => Kolor {
+            KolorScheme::GruvboxLight => Kolor {
                 red: (204, 36, 29),
                 purple: (211, 134, 155),
                 blue: (69, 133, 136),
@@ -143,7 +183,7 @@ impl Kolor {
                 yellow: (215, 153, 33),
                 text: (60, 56, 54),
             },
-            "onedark" => Kolor {
+            KolorScheme::OneDark => Kolor {
                 red: (224, 108, 117),
                 purple: (198, 120, 221),
                 blue: (97, 175, 239),
@@ -152,7 +192,7 @@ impl Kolor {
                 yellow: (229, 192, 123),
                 text: (171, 178, 191),
             },
-            "tokyonight" => Kolor {
+            KolorScheme::TokyoNight => Kolor {
                 red: (247, 118, 142),
                 purple: (173, 142, 230),
                 blue: (122, 162, 247),
@@ -161,7 +201,7 @@ impl Kolor {
                 yellow: (224, 175, 104),
                 text: (169, 177, 214),
             },
-            "ayu" => Kolor {
+            KolorScheme::Ayu => Kolor {
                 red: (255, 51, 51),
                 purple: (212, 191, 255),
                 blue: (115, 208, 255),
@@ -170,7 +210,7 @@ impl Kolor {
                 yellow: (255, 238, 153),
                 text: (203, 204, 198),
             },
-            "palenight" => Kolor {
+            KolorScheme::PaleNight => Kolor {
                 red: (255, 85, 114),
                 purple: (199, 146, 234),
                 blue: (96, 173, 236),
@@ -179,7 +219,7 @@ impl Kolor {
                 yellow: (255, 203, 107),
                 text: (255, 254, 254),
             },
-            "gogh" => Kolor {
+            KolorScheme::Gogh => Kolor {
                 red: (255, 85, 114),
                 purple: (245, 128, 255),
                 blue: (117, 161, 255),
@@ -188,7 +228,7 @@ impl Kolor {
                 yellow: (255, 203, 107),
                 text: (255, 254, 254),
             },
-            "biscuit_dark" => Kolor {
+            KolorScheme::BiscuitDark => Kolor {
                 red: (207, 34, 56),
                 purple: (123, 61, 121),
                 blue: (124, 138, 126),
@@ -197,7 +237,7 @@ impl Kolor {
                 yellow: (227, 137, 69),
                 text: (255, 233, 199),
             },
-            "biscuit_light" => Kolor {
+            KolorScheme::BiscuitLight => Kolor {
                 red: (174, 71, 80),
                 purple: (131, 84, 107),
                 blue: (122, 127, 127),
@@ -206,38 +246,19 @@ impl Kolor {
                 yellow: (205, 145, 101),
                 text: (255, 233, 199),
             },
-            _ => Kolor {
-                red: (243, 139, 168),
-                purple: (203, 166, 247),
-                blue: (137, 180, 250),
-                green: (166, 227, 161),
-                orange: (250, 179, 135),
-                yellow: (249, 226, 175),
-                text: (205, 214, 244),
-            },
         }
     }
-    pub fn get_all_kolorschemes() -> [&'static str; 12] {
-        [
-            "catppuccin latte",
-            "catppuccin frappe",
-            "catppuccin macchiato",
-            "catppuccin mocha",
-            "dracula",
-            "nord",
-            "gruvbox_dark",
-            "gruvbox_light",
-            "onedark",
-            "tokyonight",
-            "ayu",
-            "palenight",
-            "gogh",
-            "biscuit_dark",
-            "biscuit_light",
-        ]
+}
+
+impl Kolor {
+    pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
+        Kolor::from(scheme.into())
     }
-    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8))  -> String {
-        format!("\x1b[38;2;{};{};{}m{}\x1b[0m", colors.0, colors.1, colors.2, str)
+    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> String {
+        format!(
+            "\x1b[38;2;{};{};{}m{}\x1b[0m",
+            colors.0, colors.1, colors.2, str
+        )
     }
     pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> String {
         Self::kolorize(str, self.red)
