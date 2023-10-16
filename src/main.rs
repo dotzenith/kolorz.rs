@@ -15,6 +15,8 @@ fn main() {
         Ayu,
         PaleNight,
         Gogh,
+        BiscuitDark,
+        BiscuitLight,
     ];
 
     for colorscheme in colorschemes.iter() {

@@ -66,12 +66,15 @@ fn main() {
 - catppuccin mocha
 - dracula
 - nord
-- gruvbox
+- gruvbox dark
+- gruvbox light
 - onedark
 - tokyonight
 - ayu
 - palenight
 - gogh
+- biscuit dark
+- biscuit light
 
 ---
 
@@ -87,6 +90,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
+0.5.1 - Added Gruvbox Light, Biscuit Dark, Biscuit Light 
 0.5.0 - Use enums instead of &str
 
 ---

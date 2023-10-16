@@ -103,6 +103,8 @@ impl From<&str> for KolorScheme {
             "ayu" => Self::Ayu,
             "palenight" => Self::PaleNight,
             "gogh" => Self::Gogh,
+            "biscuit dark" => Self::BiscuitDark,
+            "biscuit light" => Self::BiscuitLight,
             _ => Default::default(),
         }
     }
