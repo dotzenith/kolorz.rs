@@ -29,12 +29,15 @@
 //! - catppuccin mocha
 //! - dracula
 //! - nord
-//! - gruvbox
+//! - gruvbox darj
+//! - gruvbox light
 //! - onedark
 //! - tokyonight
 //! - ayu
 //! - palenight
 //! - gogh
+//! - biscuit dark
+//! - biscuit light
 //!
 //! ## The following colors are available on all of the kolorschemes:
 //!
@@ -64,12 +67,15 @@ pub enum KolorScheme {
     CatppuccinMocha,
     Dracula,
     Nord,
-    Gruvbox,
+    GruvboxDark,
+    GruvboxLight,
     OneDark,
     TokyoNight,
     Ayu,
     PaleNight,
     Gogh,
+    BiscuitDark,
+    BiscuitLight,
 }
 impl Default for KolorScheme {
     fn default() -> Self {
@@ -90,12 +96,15 @@ impl From<&str> for KolorScheme {
             "catppuccin mocha" => Self::CatppuccinMocha,
             "dracula" => Self::Dracula,
             "nord" => Self::Nord,
-            "gruvbox" => Self::Gruvbox,
+            "gruvbox dark" => Self::GruvboxDark,
+            "gruvbox light" => Self::GruvboxLight,
             "onedark" => Self::OneDark,
             "tokyonight" => Self::TokyoNight,
             "ayu" => Self::Ayu,
             "palenight" => Self::PaleNight,
             "gogh" => Self::Gogh,
+            "biscuit dark" => Self::BiscuitDark,
+            "biscuit light" => Self::BiscuitLight,
             _ => Default::default(),
         }
     }
@@ -158,7 +167,7 @@ impl From<KolorScheme> for Kolor {
                 yellow: (235, 203, 139),
                 text: (236, 239, 244),
             },
-            KolorScheme::Gruvbox => Kolor {
+            KolorScheme::GruvboxDark => Kolor {
                 red: (251, 73, 52),
                 purple: (211, 134, 155),
                 blue: (131, 165, 152),
@@ -166,6 +175,15 @@ impl From<KolorScheme> for Kolor {
                 orange: (254, 128, 25),
                 yellow: (250, 189, 47),
                 text: (235, 219, 178),
+            },
+            KolorScheme::GruvboxLight => Kolor {
+                red: (204, 36, 29),
+                purple: (211, 134, 155),
+                blue: (69, 133, 136),
+                green: (184, 187, 38),
+                orange: (254, 128, 25),
+                yellow: (215, 153, 33),
+                text: (60, 56, 54),
             },
             KolorScheme::OneDark => Kolor {
                 red: (224, 108, 117),
@@ -211,6 +229,24 @@ impl From<KolorScheme> for Kolor {
                 orange: (240, 113, 120),
                 yellow: (255, 203, 107),
                 text: (255, 254, 254),
+            },
+            KolorScheme::BiscuitDark => Kolor {
+                red: (207, 34, 56),
+                purple: (123, 61, 121),
+                blue: (124, 138, 126),
+                green: (150, 143, 107),
+                orange: (240, 104, 66),
+                yellow: (227, 137, 69),
+                text: (255, 233, 199),
+            },
+            KolorScheme::BiscuitLight => Kolor {
+                red: (174, 71, 80),
+                purple: (131, 84, 107),
+                blue: (122, 127, 127),
+                green: (151, 145, 111),
+                orange: (198, 105, 93),
+                yellow: (205, 145, 101),
+                text: (255, 233, 199),
             },
         }
     }
