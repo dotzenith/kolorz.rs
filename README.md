@@ -60,21 +60,16 @@ fn main() {
  
 ### ❖ The following kolorschemes are available:
 
-- catppuccin latte
-- catppuccin frappe
-- catppuccin macchiato
-- catppuccin mocha
-- dracula
-- nord
-- gruvbox dark
-- gruvbox light
-- onedark
-- tokyonight
-- ayu
-- palenight
-- gogh
-- biscuit dark
-- biscuit light
+- [catppuccin](https://github.com/catppuccin) - latte, frappe, macchiato, mocha
+- [nord](https://github.com/arcticicestudio/nord)
+- [dracula](https://github.com/dracula/dracula-theme)
+- [gruvbox](https://github.com/morhetz/gruvbox) - dark, light
+- [onedark](https://github.com/joshdick/onedark.vim)
+- [tokyonight](https://github.com/folke/tokyonight.nvim)
+- [ayu](https://github.com/ayu-theme)
+- [palenight](https://github.com/drewtempelmeyer/palenight.vim)
+- [gogh](https://github.com/Mayccoll/Gogh)
+- [biscuit](https://github.com/Biscuit-Colorscheme/biscuit) - dark, light
 
 ---
 
