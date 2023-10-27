@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.6.0"
+kolorz = "0.6.1"
 ```
 
 ---
@@ -85,7 +85,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.6.0 - Added Gruvbox Light, Biscuit Dark, Biscuit Light 
+0.6.1 - Minor typo fix
 
 ---
 

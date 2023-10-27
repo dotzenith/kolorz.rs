@@ -29,7 +29,7 @@
 //! - catppuccin mocha
 //! - dracula
 //! - nord
-//! - gruvbox darj
+//! - gruvbox dark
 //! - gruvbox light
 //! - onedark
 //! - tokyonight
