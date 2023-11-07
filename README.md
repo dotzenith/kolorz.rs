@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.6.1"
+kolorz = "0.7.0"
 ```
 
 ---
@@ -85,7 +85,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.6.1 - Minor typo fix
+0.7.0 - Fix formatting, methods no longer return a String
 
 ---
 
