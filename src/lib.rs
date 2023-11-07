@@ -48,6 +48,8 @@
 //! - yellow
 //! - text (usually white for dark kolorschemes)
 
+use std::fmt::Display;
+
 #[derive(Clone, Copy)]
 pub struct Kolor {
     red: (u8, u8, u8),
@@ -77,6 +79,7 @@ pub enum KolorScheme {
     BiscuitDark,
     BiscuitLight,
 }
+
 impl Default for KolorScheme {
     fn default() -> Self {
         Self::CatppuccinMocha
@@ -87,6 +90,7 @@ impl From<&KolorScheme> for KolorScheme {
         kolorscheme.clone()
     }
 }
+
 impl From<&str> for KolorScheme {
     fn from(s: &str) -> Self {
         match s {
@@ -256,31 +260,57 @@ impl Kolor {
     pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
         Kolor::from(scheme.into())
     }
-    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> String {
-        format!(
-            "\x1b[38;2;{};{};{}m{}\x1b[0m",
-            colors.0, colors.1, colors.2, str
+    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> KoloredText {
+        KoloredText::new(
+            format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
+            str.into(),
         )
     }
-    pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.red)
     }
-    pub fn purple(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn purple(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.purple)
     }
-    pub fn blue(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn blue(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.blue)
     }
-    pub fn green(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn green(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.green)
     }
-    pub fn orange(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn orange(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.orange)
     }
-    pub fn yellow(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn yellow(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.yellow)
     }
-    pub fn text(&self, str: impl std::fmt::Display + Into<String>) -> String {
+    pub fn text(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.text)
+    }
+}
+
+#[derive(Clone)]
+pub struct KoloredText {
+    prefix: String,
+    suffix: &'static str,
+    text: String,
+}
+
+impl KoloredText {
+    pub fn new(pre: String, text: String) -> Self {
+        KoloredText {
+            prefix: pre,
+            suffix: "\x1b[0m",
+            text,
+        }
+    }
+}
+
+impl Display for KoloredText {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.prefix)?;
+        self.text.fmt(f)?;
+        f.write_str(&self.suffix)?;
+        Ok(())
     }
 }
