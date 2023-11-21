@@ -47,7 +47,32 @@
 //! - orange
 //! - yellow
 //! - text (usually white for dark kolorschemes)
+//!
+//! ## Kustom Kolorz are also available
+//!
+//! ```rust
+//! // custom kolorz from hex
+//! use kolorz::HexKolorize;
+//!
+//! fn main() {
+//!     println!("{}", "This is peach".kolorize("#fab387"));
+//! }
+//! ```
+//!
+//! ```rust
+//! // custom kolorz from RGB
+//! use kolorz::RGBKolorize;
+//!
+//! fn main() {
+//!     println!("{}", "This is red".kolorize((235, 160, 172)));
+//! }
+//! ```
 
+pub mod rgb;
+pub mod hex;
+
+pub use rgb::RGBKolorize;
+pub use hex::HexKolorize;
 use std::fmt::Display;
 
 #[derive(Clone, Copy)]
@@ -260,7 +285,7 @@ impl Kolor {
     pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
         Kolor::from(scheme.into())
     }
-    fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> KoloredText {
+    pub fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> KoloredText {
         KoloredText::new(
             format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
             str.into(),

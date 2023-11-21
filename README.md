@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.7.0"
+kolorz = "0.8.0"
 ```
 
 ---
@@ -44,15 +44,6 @@ use kolorz::Kolor;
 fn main() {
     let mocha = Kolor::new("catppuccin mocha");
     println!("{}", mocha.red("This is red"));
-}
-```
-
-```rust
-// get an array of all available kolorschemes
-use kolorz::Kolor;
-
-fn main() {
-    let kolorschemes = Kolor::get_all_kolorschemes();
 }
 ```
 
@@ -84,8 +75,30 @@ fn main() {
 
 ---
 
+### ❖ Kustom Kolorz are also available
+
+```rust
+// custom kolorz from hex
+use kolorz::HexKolorize;
+
+fn main() {
+    println!("{}", "This is peach".kolorize("#fab387"));
+}
+```
+
+```rust
+// custom kolorz from RGB
+use kolorz::RGBKolorize;
+
+fn main() {
+    println!("{}", "This is red".kolorize((235, 160, 172)));
+}
+```
+
+---
+
 ### ❖ What's New? 
-0.7.0 - Fix formatting, methods no longer return a String
+0.8.0 - Add traits to implement kustom kolorz
 
 ---
 
