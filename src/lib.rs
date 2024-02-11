@@ -47,6 +47,7 @@
 //! - orange
 //! - yellow
 //! - text (usually white for dark kolorschemes)
+//! - random (picks a random kolor from above)
 //!
 //! ## Kustom Kolorz are also available
 //!
@@ -68,11 +69,12 @@
 //! }
 //! ```
 
-pub mod rgb;
 pub mod hex;
+pub mod rgb;
 
-pub use rgb::RGBKolorize;
 pub use hex::HexKolorize;
+use rand::Rng;
+pub use rgb::RGBKolorize;
 use std::fmt::Display;
 
 #[derive(Clone, Copy)]
@@ -285,11 +287,27 @@ impl Kolor {
     pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
         Kolor::from(scheme.into())
     }
-    pub fn kolorize(str: impl std::fmt::Display + Into<String>, colors: (u8, u8, u8)) -> KoloredText {
+    pub fn kolorize(
+        str: impl std::fmt::Display + Into<String>,
+        colors: (u8, u8, u8),
+    ) -> KoloredText {
         KoloredText::new(
             format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
             str.into(),
         )
+    }
+    pub fn random(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
+        let functions = vec![
+            Self::red,
+            Self::purple,
+            Self::blue,
+            Self::green,
+            Self::orange,
+            Self::yellow,
+            Self::text,
+        ];
+        let mut rng = rand::thread_rng();
+        functions[rng.gen_range(0..=6) as usize](&self, str)
     }
     pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.red)

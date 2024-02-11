@@ -24,14 +24,15 @@ fn main() {
         let cur = Kolor::new(colorscheme);
         println!("{:?}", colorscheme);
         println!(
-            "{} {} {} {} {} {} {}",
+            "{} {} {} {} {} {} {} {}",
             cur.red("red"),
             cur.purple("purple"),
             cur.blue("blue"),
             cur.green("green"),
             cur.orange("orange"),
             cur.yellow("yellow"),
-            cur.text("text\n")
+            cur.text("text"),
+            cur.random("random\n")
         );
     }
 }

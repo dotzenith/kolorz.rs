@@ -1,9 +1,10 @@
 [package]
 name = "kolorz"
-version = "0.8.0"
+version = "0.9.0"
 edition = "2021"
 description = "A silly little library for printing kolored text to the terminal "
 repository = "https://github.com/dotzenith/kolorz.rs"
 license = "MIT"
 
 [dependencies]
+rand = "0.8.5"
