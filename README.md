@@ -30,7 +30,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.9.0"
+kolorz = "0.10.0"
 ```
 
 ---
@@ -66,13 +66,15 @@ fn main() {
 
 ### ❖ The following kolors are available on all of the kolorschemes:
 
-- red
-- purple
-- blue
-- orange
-- yellow
-- text (usually white on dark kolorschemes)
+- red           (0)
+- purple        (1)
+- blue          (2)
+- green         (3)
+- orange        (4)
+- yellow        (5)
+- text          (6)
 - random (picks a random color from above)
+- numbered (allows the user to pick a kolor by number)
 
 ---
 
@@ -99,7 +101,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.9.0 - Add random kolorz
+0.10.0 - Add numbered method to call kolorz a number
 
 ---
 

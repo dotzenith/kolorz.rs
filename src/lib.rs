@@ -41,13 +41,15 @@
 //!
 //! ## The following colors are available on all of the kolorschemes:
 //!
-//! - red
-//! - purple
-//! - blue
-//! - orange
-//! - yellow
-//! - text (usually white for dark kolorschemes)
-//! - random (picks a random kolor from above)
+//! - red           (0)
+//! - purple        (1)
+//! - blue          (2)
+//! - green         (3)
+//! - orange        (4)
+//! - yellow        (5)
+//! - text          (6)
+//! - random (picks a random color from above)
+//! - numbered (allows the user to pick a kolor by number)
 //!
 //! ## Kustom Kolorz are also available
 //!
@@ -308,6 +310,18 @@ impl Kolor {
         ];
         let mut rng = rand::thread_rng();
         functions[rng.gen_range(0..=6) as usize](&self, str)
+    }
+    pub fn numbered(&self, str: impl std::fmt::Display + Into<String>, num: usize) -> KoloredText {
+        let functions = vec![
+            Self::red,
+            Self::purple,
+            Self::blue,
+            Self::green,
+            Self::orange,
+            Self::yellow,
+            Self::text,
+        ];
+        functions[num](&self, str)
     }
     pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
         Self::kolorize(str, self.red)
