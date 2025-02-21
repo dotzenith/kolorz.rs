@@ -101,7 +101,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.10.0 - Add numbered method to call kolorz a number
+0.10.1 - Update Rust edition
 
 ---
 
