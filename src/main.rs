@@ -20,8 +20,8 @@ fn main() {
         BiscuitLight,
     ];
 
-    for colorscheme in colorschemes.iter() {
-        let cur = Kolor::new(colorscheme);
+    for colorscheme in colorschemes.into_iter() {
+        let cur = Kolor::new(colorscheme).expect("Invalid kolorscheme");
         println!("{:?}", colorscheme);
         println!(
             "{} {} {} {} {} {} {} {}",

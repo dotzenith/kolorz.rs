@@ -12,12 +12,12 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! // print kolored text
 //! use kolorz::Kolor;
 //!
-//! fn main() {
-//!     let mocha = Kolor::new("catppuccin mocha");
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     let mocha = Kolor::new("catppuccin mocha")?;
 //!     println!("{}", mocha.red("This is red"));
+//!     Ok(())
 //! }
 //! ```
 //!
@@ -54,11 +54,11 @@
 //! ## Kustom Kolorz are also available
 //!
 //! ```rust
-//! // custom kolorz from hex
 //! use kolorz::HexKolorize;
 //!
-//! fn main() {
-//!     println!("{}", "This is peach".kolorize("#fab387"));
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
+//!     println!("{}", "This is peach".kolorize("#fab387")?);
+//!     Ok(())
 //! }
 //! ```
 //!
@@ -71,26 +71,31 @@
 //! }
 //! ```
 
+pub mod errors;
 pub mod hex;
 pub mod rgb;
 
+pub use errors::{UnknownKolorSchemeError, InvalidColorNumberError, InvalidHexCodeError};
 pub use hex::HexKolorize;
 use rand::Rng;
 pub use rgb::RGBKolorize;
 use std::fmt::Display;
 
-#[derive(Clone, Copy)]
+pub type RGB = (u8, u8, u8);
+
+#[derive(Clone, Copy, Debug)]
 pub struct Kolor {
-    red: (u8, u8, u8),
-    purple: (u8, u8, u8),
-    blue: (u8, u8, u8),
-    green: (u8, u8, u8),
-    orange: (u8, u8, u8),
-    yellow: (u8, u8, u8),
-    text: (u8, u8, u8),
+    red: RGB,
+    purple: RGB,
+    blue: RGB,
+    green: RGB,
+    orange: RGB,
+    yellow: RGB,
+    text: RGB,
 }
 
 #[derive(Clone, Copy, Debug)]
+#[non_exhaustive]
 pub enum KolorScheme {
     CatppuccinLatte,
     CatppuccinFrappe,
@@ -114,31 +119,28 @@ impl Default for KolorScheme {
         Self::CatppuccinMocha
     }
 }
-impl From<&KolorScheme> for KolorScheme {
-    fn from(kolorscheme: &KolorScheme) -> Self {
-        kolorscheme.clone()
-    }
-}
 
-impl From<&str> for KolorScheme {
-    fn from(s: &str) -> Self {
+impl TryFrom<&str> for KolorScheme {
+    type Error = UnknownKolorSchemeError;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
         match s {
-            "catppuccin latte" => Self::CatppuccinLatte,
-            "catppuccin frappe" => Self::CatppuccinFrappe,
-            "catppuccin macchiato" => Self::CatppuccinMacchiato,
-            "catppuccin mocha" => Self::CatppuccinMocha,
-            "dracula" => Self::Dracula,
-            "nord" => Self::Nord,
-            "gruvbox dark" => Self::GruvboxDark,
-            "gruvbox light" => Self::GruvboxLight,
-            "onedark" => Self::OneDark,
-            "tokyonight" => Self::TokyoNight,
-            "ayu" => Self::Ayu,
-            "palenight" => Self::PaleNight,
-            "gogh" => Self::Gogh,
-            "biscuit dark" => Self::BiscuitDark,
-            "biscuit light" => Self::BiscuitLight,
-            _ => Default::default(),
+            "catppuccin latte" => Ok(Self::CatppuccinLatte),
+            "catppuccin frappe" => Ok(Self::CatppuccinFrappe),
+            "catppuccin macchiato" => Ok(Self::CatppuccinMacchiato),
+            "catppuccin mocha" => Ok(Self::CatppuccinMocha),
+            "dracula" => Ok(Self::Dracula),
+            "nord" => Ok(Self::Nord),
+            "gruvbox dark" => Ok(Self::GruvboxDark),
+            "gruvbox light" => Ok(Self::GruvboxLight),
+            "onedark" => Ok(Self::OneDark),
+            "tokyonight" => Ok(Self::TokyoNight),
+            "ayu" => Ok(Self::Ayu),
+            "palenight" => Ok(Self::PaleNight),
+            "gogh" => Ok(Self::Gogh),
+            "biscuit dark" => Ok(Self::BiscuitDark),
+            "biscuit light" => Ok(Self::BiscuitLight),
+            _ => Err(UnknownKolorSchemeError::new(s)),
         }
     }
 }
@@ -286,67 +288,73 @@ impl From<KolorScheme> for Kolor {
 }
 
 impl Kolor {
-    pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
-        Kolor::from(scheme.into())
+    pub fn new<T: TryInto<KolorScheme>>(scheme: T) -> Result<Self, T::Error> {
+        Ok(Kolor::from(scheme.try_into()?))
     }
     pub fn kolorize(
-        str: impl std::fmt::Display + Into<String>,
-        colors: (u8, u8, u8),
+        text: impl std::fmt::Display,
+        colors: RGB,
     ) -> KoloredText {
         KoloredText::new(
             format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
-            str.into(),
+            text.to_string(),
         )
     }
-    pub fn random(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        let functions = vec![
-            Self::red,
-            Self::purple,
-            Self::blue,
-            Self::green,
-            Self::orange,
-            Self::yellow,
-            Self::text,
-        ];
+    pub fn random(&self, text: impl std::fmt::Display) -> KoloredText {
         let mut rng = rand::thread_rng();
-        functions[rng.gen_range(0..=6) as usize](&self, str)
+
+        match rng.gen_range(0..=6) as usize {
+            0 => self.red(text),
+            1 => self.purple(text),
+            2 => self.blue(text),
+            3 => self.green(text),
+            4 => self.orange(text),
+            5 => self.yellow(text),
+            6 => self.text(text),
+            _ => unreachable!()
+        }
     }
-    pub fn numbered(&self, str: impl std::fmt::Display + Into<String>, num: usize) -> KoloredText {
-        let functions = vec![
-            Self::red,
-            Self::purple,
-            Self::blue,
-            Self::green,
-            Self::orange,
-            Self::yellow,
-            Self::text,
-        ];
-        functions[num](&self, str)
+
+    pub fn numbered(
+        &self,
+        text: impl std::fmt::Display,
+        num: usize,
+    ) -> Result<KoloredText, InvalidColorNumberError> {
+        match num {
+            0 => Ok(self.red(text)),
+            1 => Ok(self.purple(text)),
+            2 => Ok(self.blue(text)),
+            3 => Ok(self.green(text)),
+            4 => Ok(self.orange(text)),
+            5 => Ok(self.yellow(text)),
+            6 => Ok(self.text(text)),
+            _ => Err(InvalidColorNumberError::new(num)),
+        }
     }
-    pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.red)
+    pub fn red(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.red)
     }
-    pub fn purple(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.purple)
+    pub fn purple(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.purple)
     }
-    pub fn blue(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.blue)
+    pub fn blue(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.blue)
     }
-    pub fn green(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.green)
+    pub fn green(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.green)
     }
-    pub fn orange(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.orange)
+    pub fn orange(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.orange)
     }
-    pub fn yellow(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.yellow)
+    pub fn yellow(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.yellow)
     }
-    pub fn text(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.text)
+    pub fn text(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.text)
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct KoloredText {
     prefix: String,
     suffix: &'static str,
