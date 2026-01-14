@@ -20,7 +20,10 @@
 
 ### ❖ Information
 
-kolorz is a silly little library for printing kolored text to the terminal 
+kolorz is a silly little library for printing kolored text to the terminal
+
+It supports a number of [kolorschemes](#-the-following-kolorschemes-are-available),
+and it respects [CLICOLOR and friends](https://bixense.com/clicolors/)
 
 ---
 
@@ -30,7 +33,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "0.10.0"
+kolorz = "1.0.0"
 ```
 
 ---
@@ -42,7 +45,7 @@ kolorz = "0.10.0"
 use kolorz::Kolor;
 
 fn main() {
-    let mocha = Kolor::new("catppuccin mocha");
+    let mocha = Kolor::new("catppuccin mocha").expect("Invalid kolorscheme");
     println!("{}", mocha.red("This is red"));
 }
 ```
@@ -85,7 +88,7 @@ fn main() {
 use kolorz::HexKolorize;
 
 fn main() {
-    println!("{}", "This is peach".kolorize("#fab387"));
+    println!("{}", "This is peach".kolorize("#fab387").expect("Invalid hex color"));
 }
 ```
 
@@ -101,7 +104,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-0.10.1 - Update Rust edition
+1.0.0 - New, Stable API with support for `CLICOLOR` and friends
 
 ---
 

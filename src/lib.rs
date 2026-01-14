@@ -12,11 +12,10 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! // print kolored text
 //! use kolorz::Kolor;
 //!
 //! fn main() {
-//!     let mocha = Kolor::new("catppuccin mocha");
+//!     let mocha = Kolor::new("catppuccin mocha").expect("Invalid kolorscheme");
 //!     println!("{}", mocha.red("This is red"));
 //! }
 //! ```
@@ -54,11 +53,10 @@
 //! ## Kustom Kolorz are also available
 //!
 //! ```rust
-//! // custom kolorz from hex
 //! use kolorz::HexKolorize;
 //!
 //! fn main() {
-//!     println!("{}", "This is peach".kolorize("#fab387"));
+//!     println!("{}", "This is peach".kolorize("#fab387").expect("Invalid Hex"));
 //! }
 //! ```
 //!
@@ -71,26 +69,52 @@
 //! }
 //! ```
 
+pub mod errors;
 pub mod hex;
 pub mod rgb;
 
+pub use errors::{InvalidColorNumberError, InvalidHexCodeError, UnknownKolorSchemeError};
 pub use hex::HexKolorize;
 use rand::Rng;
 pub use rgb::RGBKolorize;
 use std::fmt::Display;
+use std::io::IsTerminal;
 
-#[derive(Clone, Copy)]
+/// Determines if colors should be used based on the CLICOLORS spec.
+///
+/// Priority (highest to lowest):
+/// 1. `NO_COLOR` env var - if set, colors are disabled
+/// 2. `CLICOLOR_FORCE` env var - if set, colors are always enabled
+/// 3. `CLICOLOR` env var / default - colors enabled only if stdout is a TTY
+///
+/// See <https://bixense.com/clicolors/> for the full specification.
+pub fn colors_enabled() -> bool {
+    if std::env::var_os("NO_COLOR").is_some() {
+        return false;
+    }
+
+    if std::env::var_os("CLICOLOR_FORCE").is_some() {
+        return true;
+    }
+
+    std::io::stdout().is_terminal()
+}
+
+pub type RGB = (u8, u8, u8);
+
+#[derive(Clone, Copy, Debug)]
 pub struct Kolor {
-    red: (u8, u8, u8),
-    purple: (u8, u8, u8),
-    blue: (u8, u8, u8),
-    green: (u8, u8, u8),
-    orange: (u8, u8, u8),
-    yellow: (u8, u8, u8),
-    text: (u8, u8, u8),
+    red: RGB,
+    purple: RGB,
+    blue: RGB,
+    green: RGB,
+    orange: RGB,
+    yellow: RGB,
+    text: RGB,
 }
 
 #[derive(Clone, Copy, Debug)]
+#[non_exhaustive]
 pub enum KolorScheme {
     CatppuccinLatte,
     CatppuccinFrappe,
@@ -114,31 +138,28 @@ impl Default for KolorScheme {
         Self::CatppuccinMocha
     }
 }
-impl From<&KolorScheme> for KolorScheme {
-    fn from(kolorscheme: &KolorScheme) -> Self {
-        kolorscheme.clone()
-    }
-}
 
-impl From<&str> for KolorScheme {
-    fn from(s: &str) -> Self {
+impl TryFrom<&str> for KolorScheme {
+    type Error = UnknownKolorSchemeError;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
         match s {
-            "catppuccin latte" => Self::CatppuccinLatte,
-            "catppuccin frappe" => Self::CatppuccinFrappe,
-            "catppuccin macchiato" => Self::CatppuccinMacchiato,
-            "catppuccin mocha" => Self::CatppuccinMocha,
-            "dracula" => Self::Dracula,
-            "nord" => Self::Nord,
-            "gruvbox dark" => Self::GruvboxDark,
-            "gruvbox light" => Self::GruvboxLight,
-            "onedark" => Self::OneDark,
-            "tokyonight" => Self::TokyoNight,
-            "ayu" => Self::Ayu,
-            "palenight" => Self::PaleNight,
-            "gogh" => Self::Gogh,
-            "biscuit dark" => Self::BiscuitDark,
-            "biscuit light" => Self::BiscuitLight,
-            _ => Default::default(),
+            "catppuccin latte" => Ok(Self::CatppuccinLatte),
+            "catppuccin frappe" => Ok(Self::CatppuccinFrappe),
+            "catppuccin macchiato" => Ok(Self::CatppuccinMacchiato),
+            "catppuccin mocha" => Ok(Self::CatppuccinMocha),
+            "dracula" => Ok(Self::Dracula),
+            "nord" => Ok(Self::Nord),
+            "gruvbox dark" => Ok(Self::GruvboxDark),
+            "gruvbox light" => Ok(Self::GruvboxLight),
+            "onedark" => Ok(Self::OneDark),
+            "tokyonight" => Ok(Self::TokyoNight),
+            "ayu" => Ok(Self::Ayu),
+            "palenight" => Ok(Self::PaleNight),
+            "gogh" => Ok(Self::Gogh),
+            "biscuit dark" => Ok(Self::BiscuitDark),
+            "biscuit light" => Ok(Self::BiscuitLight),
+            _ => Err(UnknownKolorSchemeError::new(s)),
         }
     }
 }
@@ -286,88 +307,229 @@ impl From<KolorScheme> for Kolor {
 }
 
 impl Kolor {
-    pub fn new<T: Into<KolorScheme>>(scheme: T) -> Self {
-        Kolor::from(scheme.into())
+    pub fn new<T: TryInto<KolorScheme>>(scheme: T) -> Result<Self, T::Error> {
+        Ok(Kolor::from(scheme.try_into()?))
     }
-    pub fn kolorize(
-        str: impl std::fmt::Display + Into<String>,
-        colors: (u8, u8, u8),
-    ) -> KoloredText {
-        KoloredText::new(
-            format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
-            str.into(),
-        )
+    pub fn kolorize(text: impl std::fmt::Display, color: RGB) -> KoloredText {
+        KoloredText::new(text.to_string(), color)
     }
-    pub fn random(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        let functions = vec![
-            Self::red,
-            Self::purple,
-            Self::blue,
-            Self::green,
-            Self::orange,
-            Self::yellow,
-            Self::text,
-        ];
+    pub fn random(&self, text: impl std::fmt::Display) -> KoloredText {
         let mut rng = rand::thread_rng();
-        functions[rng.gen_range(0..=6) as usize](&self, str)
+
+        match rng.gen_range(0..=6) as usize {
+            0 => self.red(text),
+            1 => self.purple(text),
+            2 => self.blue(text),
+            3 => self.green(text),
+            4 => self.orange(text),
+            5 => self.yellow(text),
+            6 => self.text(text),
+            _ => unreachable!(),
+        }
     }
-    pub fn numbered(&self, str: impl std::fmt::Display + Into<String>, num: usize) -> KoloredText {
-        let functions = vec![
-            Self::red,
-            Self::purple,
-            Self::blue,
-            Self::green,
-            Self::orange,
-            Self::yellow,
-            Self::text,
-        ];
-        functions[num](&self, str)
+
+    pub fn numbered(
+        &self,
+        text: impl std::fmt::Display,
+        num: usize,
+    ) -> Result<KoloredText, InvalidColorNumberError> {
+        match num {
+            0 => Ok(self.red(text)),
+            1 => Ok(self.purple(text)),
+            2 => Ok(self.blue(text)),
+            3 => Ok(self.green(text)),
+            4 => Ok(self.orange(text)),
+            5 => Ok(self.yellow(text)),
+            6 => Ok(self.text(text)),
+            _ => Err(InvalidColorNumberError::new(num)),
+        }
     }
-    pub fn red(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.red)
+    pub fn red(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.red)
     }
-    pub fn purple(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.purple)
+    pub fn purple(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.purple)
     }
-    pub fn blue(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.blue)
+    pub fn blue(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.blue)
     }
-    pub fn green(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.green)
+    pub fn green(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.green)
     }
-    pub fn orange(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.orange)
+    pub fn orange(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.orange)
     }
-    pub fn yellow(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.yellow)
+    pub fn yellow(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.yellow)
     }
-    pub fn text(&self, str: impl std::fmt::Display + Into<String>) -> KoloredText {
-        Self::kolorize(str, self.text)
+    pub fn text(&self, text: impl std::fmt::Display) -> KoloredText {
+        Self::kolorize(text, self.text)
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct KoloredText {
-    prefix: String,
-    suffix: &'static str,
     text: String,
+    color: RGB,
 }
 
 impl KoloredText {
-    pub fn new(pre: String, text: String) -> Self {
-        KoloredText {
-            prefix: pre,
-            suffix: "\x1b[0m",
-            text,
-        }
+    pub fn new(text: String, color: RGB) -> Self {
+        KoloredText { text, color }
     }
 }
 
 impl Display for KoloredText {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.prefix)?;
-        self.text.fmt(f)?;
-        f.write_str(&self.suffix)?;
-        Ok(())
+        if colors_enabled() {
+            // Write prefix, text, suffix separately to avoid formatting issues
+            write!(
+                f,
+                "\x1b[38;2;{};{};{}m",
+                self.color.0, self.color.1, self.color.2
+            )?;
+            self.text.fmt(f)?;
+            f.write_str("\x1b[0m")
+        } else {
+            self.text.fmt(f)
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod kolor_scheme {
+        use super::*;
+
+        #[test]
+        fn parse_valid_schemes() {
+            assert!(KolorScheme::try_from("catppuccin mocha").is_ok());
+            assert!(KolorScheme::try_from("catppuccin latte").is_ok());
+            assert!(KolorScheme::try_from("catppuccin frappe").is_ok());
+            assert!(KolorScheme::try_from("catppuccin macchiato").is_ok());
+            assert!(KolorScheme::try_from("dracula").is_ok());
+            assert!(KolorScheme::try_from("nord").is_ok());
+            assert!(KolorScheme::try_from("gruvbox dark").is_ok());
+            assert!(KolorScheme::try_from("gruvbox light").is_ok());
+            assert!(KolorScheme::try_from("onedark").is_ok());
+            assert!(KolorScheme::try_from("tokyonight").is_ok());
+            assert!(KolorScheme::try_from("ayu").is_ok());
+            assert!(KolorScheme::try_from("palenight").is_ok());
+            assert!(KolorScheme::try_from("gogh").is_ok());
+            assert!(KolorScheme::try_from("biscuit dark").is_ok());
+            assert!(KolorScheme::try_from("biscuit light").is_ok());
+        }
+
+        #[test]
+        fn parse_invalid_scheme() {
+            let err = KolorScheme::try_from("not-a-scheme").unwrap_err();
+            assert_eq!(err.name(), "not-a-scheme");
+        }
+
+        #[test]
+        fn default_scheme() {
+            assert!(matches!(
+                KolorScheme::default(),
+                KolorScheme::CatppuccinMocha
+            ));
+        }
+    }
+
+    mod kolor {
+        use super::*;
+
+        #[test]
+        fn new_with_valid_str() {
+            assert!(Kolor::new("catppuccin mocha").is_ok());
+            assert!(Kolor::new("dracula").is_ok());
+        }
+
+        #[test]
+        fn new_with_invalid_str() {
+            assert!(Kolor::new("invalid").is_err());
+        }
+
+        #[test]
+        fn new_with_enum() {
+            assert!(Kolor::new(KolorScheme::Dracula).is_ok());
+            assert!(Kolor::new(KolorScheme::Nord).is_ok());
+        }
+
+        #[test]
+        fn numbered_valid_range() {
+            let kolor = Kolor::new("dracula").unwrap();
+            for i in 0..=6 {
+                assert!(kolor.numbered("test", i).is_ok());
+            }
+        }
+
+        #[test]
+        fn numbered_out_of_range() {
+            let kolor = Kolor::new("dracula").unwrap();
+            let err = kolor.numbered("test", 7).unwrap_err();
+            assert_eq!(err.number(), 7);
+
+            let err = kolor.numbered("test", 100).unwrap_err();
+            assert_eq!(err.number(), 100);
+        }
+
+        #[test]
+        fn random_returns_kolored_text() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
+            let kolor = Kolor::new("dracula").unwrap();
+            let output = kolor.random("test").to_string();
+            assert!(output.starts_with("\x1b[38;2;"));
+            assert!(output.ends_with("\x1b[0m"));
+        }
+    }
+
+    mod kolored_text {
+        use super::*;
+
+        #[test]
+        fn format_includes_ansi_codes() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
+            let kolor = Kolor::new("catppuccin mocha").unwrap();
+            let output = kolor.red("hello").to_string();
+
+            assert!(output.starts_with("\x1b[38;2;"));
+            assert!(output.ends_with("\x1b[0m"));
+            assert!(output.contains("hello"));
+        }
+
+        #[test]
+        fn kolorize_with_rgb_values() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
+            let output = Kolor::kolorize("test", (255, 128, 0)).to_string();
+            assert!(output.contains("255;128;0"));
+        }
+
+        #[test]
+        fn each_color_method_works() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
+            let kolor = Kolor::new("dracula").unwrap();
+
+            assert!(kolor.red("x").to_string().contains("255;85;85"));
+            assert!(kolor.purple("x").to_string().contains("189;147;249"));
+            assert!(kolor.blue("x").to_string().contains("139;233;253"));
+            assert!(kolor.green("x").to_string().contains("80;250;123"));
+            assert!(kolor.orange("x").to_string().contains("255;184;108"));
+            assert!(kolor.yellow("x").to_string().contains("241;250;140"));
+            assert!(kolor.text("x").to_string().contains("248;248;242"));
+        }
+
+        #[test]
+        fn no_color_disables_ansi() {
+            unsafe { std::env::set_var("NO_COLOR", "1") };
+            unsafe { std::env::remove_var("CLICOLOR_FORCE") };
+            let kolor = Kolor::new("dracula").unwrap();
+            let output = kolor.red("hello").to_string();
+
+            assert_eq!(output, "hello");
+            assert!(!output.contains("\x1b["));
+            unsafe { std::env::remove_var("NO_COLOR") };
+        }
     }
 }
