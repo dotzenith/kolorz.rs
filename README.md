@@ -76,7 +76,7 @@ fn main() {
 - orange        (4)
 - yellow        (5)
 - text          (6)
-- random (picks a random color from above)
+- random (picks a random kolor from above)
 - numbered (allows the user to pick a kolor by number)
 
 ---
