@@ -80,6 +80,27 @@ pub use hex::HexKolorize;
 use rand::Rng;
 pub use rgb::RGBKolorize;
 use std::fmt::Display;
+use std::io::IsTerminal;
+
+/// Determines if colors should be used based on the CLICOLORS spec.
+///
+/// Priority (highest to lowest):
+/// 1. `NO_COLOR` env var - if set, colors are disabled
+/// 2. `CLICOLOR_FORCE` env var - if set, colors are always enabled
+/// 3. `CLICOLOR` env var / default - colors enabled only if stdout is a TTY
+///
+/// See <https://bixense.com/clicolors/> for the full specification.
+pub fn colors_enabled() -> bool {
+    if std::env::var_os("NO_COLOR").is_some() {
+        return false;
+    }
+
+    if std::env::var_os("CLICOLOR_FORCE").is_some() {
+        return true;
+    }
+
+    std::io::stdout().is_terminal()
+}
 
 pub type RGB = (u8, u8, u8);
 
@@ -291,11 +312,8 @@ impl Kolor {
     pub fn new<T: TryInto<KolorScheme>>(scheme: T) -> Result<Self, T::Error> {
         Ok(Kolor::from(scheme.try_into()?))
     }
-    pub fn kolorize(text: impl std::fmt::Display, colors: RGB) -> KoloredText {
-        KoloredText::new(
-            format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
-            text.to_string(),
-        )
+    pub fn kolorize(text: impl std::fmt::Display, color: RGB) -> KoloredText {
+        KoloredText::new(text.to_string(), color)
     }
     pub fn random(&self, text: impl std::fmt::Display) -> KoloredText {
         let mut rng = rand::thread_rng();
@@ -353,27 +371,30 @@ impl Kolor {
 
 #[derive(Clone, Debug)]
 pub struct KoloredText {
-    prefix: String,
-    suffix: &'static str,
     text: String,
+    color: RGB,
 }
 
 impl KoloredText {
-    pub fn new(pre: String, text: String) -> Self {
-        KoloredText {
-            prefix: pre,
-            suffix: "\x1b[0m",
-            text,
-        }
+    pub fn new(text: String, color: RGB) -> Self {
+        KoloredText { text, color }
     }
 }
 
 impl Display for KoloredText {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.prefix)?;
-        self.text.fmt(f)?;
-        f.write_str(&self.suffix)?;
-        Ok(())
+        if colors_enabled() {
+            // Write prefix, text, suffix separately to avoid formatting issues
+            write!(
+                f,
+                "\x1b[38;2;{};{};{}m",
+                self.color.0, self.color.1, self.color.2
+            )?;
+            self.text.fmt(f)?;
+            f.write_str("\x1b[0m")
+        } else {
+            self.text.fmt(f)
+        }
     }
 }
 
@@ -458,6 +479,7 @@ mod tests {
 
         #[test]
         fn random_returns_kolored_text() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
             let kolor = Kolor::new("dracula").unwrap();
             let output = kolor.random("test").to_string();
             assert!(output.starts_with("\x1b[38;2;"));
@@ -470,6 +492,7 @@ mod tests {
 
         #[test]
         fn format_includes_ansi_codes() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
             let kolor = Kolor::new("catppuccin mocha").unwrap();
             let output = kolor.red("hello").to_string();
 
@@ -480,12 +503,14 @@ mod tests {
 
         #[test]
         fn kolorize_with_rgb_values() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
             let output = Kolor::kolorize("test", (255, 128, 0)).to_string();
             assert!(output.contains("255;128;0"));
         }
 
         #[test]
         fn each_color_method_works() {
+            unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
             let kolor = Kolor::new("dracula").unwrap();
 
             assert!(kolor.red("x").to_string().contains("255;85;85"));
@@ -495,6 +520,18 @@ mod tests {
             assert!(kolor.orange("x").to_string().contains("255;184;108"));
             assert!(kolor.yellow("x").to_string().contains("241;250;140"));
             assert!(kolor.text("x").to_string().contains("248;248;242"));
+        }
+
+        #[test]
+        fn no_color_disables_ansi() {
+            unsafe { std::env::set_var("NO_COLOR", "1") };
+            unsafe { std::env::remove_var("CLICOLOR_FORCE") };
+            let kolor = Kolor::new("dracula").unwrap();
+            let output = kolor.red("hello").to_string();
+
+            assert_eq!(output, "hello");
+            assert!(!output.contains("\x1b["));
+            unsafe { std::env::remove_var("NO_COLOR") };
         }
     }
 }

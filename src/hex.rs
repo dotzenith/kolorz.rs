@@ -66,18 +66,21 @@ mod tests {
 
     #[test]
     fn hex_produces_correct_rgb() {
+        unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
         let output = "x".kolorize("#ff8000").unwrap().to_string();
         assert!(output.contains("255;128;0"));
     }
 
     #[test]
     fn hex_black() {
+        unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
         let output = "x".kolorize("#000000").unwrap().to_string();
         assert!(output.contains("0;0;0"));
     }
 
     #[test]
     fn hex_white() {
+        unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
         let output = "x".kolorize("#ffffff").unwrap().to_string();
         assert!(output.contains("255;255;255"));
     }
