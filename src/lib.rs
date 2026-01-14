@@ -14,10 +14,9 @@
 //! ```rust
 //! use kolorz::Kolor;
 //!
-//! fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let mocha = Kolor::new("catppuccin mocha")?;
+//! fn main() {
+//!     let mocha = Kolor::new("catppuccin mocha").expect("Invalid kolorscheme");
 //!     println!("{}", mocha.red("This is red"));
-//!     Ok(())
 //! }
 //! ```
 //!
@@ -56,9 +55,8 @@
 //! ```rust
 //! use kolorz::HexKolorize;
 //!
-//! fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     println!("{}", "This is peach".kolorize("#fab387")?);
-//!     Ok(())
+//! fn main() {
+//!     println!("{}", "This is peach".kolorize("#fab387").expect("Invalid Hex"));
 //! }
 //! ```
 //!
