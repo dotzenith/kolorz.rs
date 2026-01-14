@@ -1,5 +1,5 @@
-use kolorz::{Kolor, KolorScheme};
 use KolorScheme::*;
+use kolorz::{Kolor, KolorScheme};
 
 fn main() {
     let colorschemes = [

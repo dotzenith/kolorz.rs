@@ -75,7 +75,7 @@ pub mod errors;
 pub mod hex;
 pub mod rgb;
 
-pub use errors::{UnknownKolorSchemeError, InvalidColorNumberError, InvalidHexCodeError};
+pub use errors::{InvalidColorNumberError, InvalidHexCodeError, UnknownKolorSchemeError};
 pub use hex::HexKolorize;
 use rand::Rng;
 pub use rgb::RGBKolorize;
@@ -291,10 +291,7 @@ impl Kolor {
     pub fn new<T: TryInto<KolorScheme>>(scheme: T) -> Result<Self, T::Error> {
         Ok(Kolor::from(scheme.try_into()?))
     }
-    pub fn kolorize(
-        text: impl std::fmt::Display,
-        colors: RGB,
-    ) -> KoloredText {
+    pub fn kolorize(text: impl std::fmt::Display, colors: RGB) -> KoloredText {
         KoloredText::new(
             format!("\x1b[38;2;{};{};{}m", colors.0, colors.1, colors.2),
             text.to_string(),
@@ -311,7 +308,7 @@ impl Kolor {
             4 => self.orange(text),
             5 => self.yellow(text),
             6 => self.text(text),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
@@ -377,5 +374,127 @@ impl Display for KoloredText {
         self.text.fmt(f)?;
         f.write_str(&self.suffix)?;
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod kolor_scheme {
+        use super::*;
+
+        #[test]
+        fn parse_valid_schemes() {
+            assert!(KolorScheme::try_from("catppuccin mocha").is_ok());
+            assert!(KolorScheme::try_from("catppuccin latte").is_ok());
+            assert!(KolorScheme::try_from("catppuccin frappe").is_ok());
+            assert!(KolorScheme::try_from("catppuccin macchiato").is_ok());
+            assert!(KolorScheme::try_from("dracula").is_ok());
+            assert!(KolorScheme::try_from("nord").is_ok());
+            assert!(KolorScheme::try_from("gruvbox dark").is_ok());
+            assert!(KolorScheme::try_from("gruvbox light").is_ok());
+            assert!(KolorScheme::try_from("onedark").is_ok());
+            assert!(KolorScheme::try_from("tokyonight").is_ok());
+            assert!(KolorScheme::try_from("ayu").is_ok());
+            assert!(KolorScheme::try_from("palenight").is_ok());
+            assert!(KolorScheme::try_from("gogh").is_ok());
+            assert!(KolorScheme::try_from("biscuit dark").is_ok());
+            assert!(KolorScheme::try_from("biscuit light").is_ok());
+        }
+
+        #[test]
+        fn parse_invalid_scheme() {
+            let err = KolorScheme::try_from("not-a-scheme").unwrap_err();
+            assert_eq!(err.name(), "not-a-scheme");
+        }
+
+        #[test]
+        fn default_scheme() {
+            assert!(matches!(
+                KolorScheme::default(),
+                KolorScheme::CatppuccinMocha
+            ));
+        }
+    }
+
+    mod kolor {
+        use super::*;
+
+        #[test]
+        fn new_with_valid_str() {
+            assert!(Kolor::new("catppuccin mocha").is_ok());
+            assert!(Kolor::new("dracula").is_ok());
+        }
+
+        #[test]
+        fn new_with_invalid_str() {
+            assert!(Kolor::new("invalid").is_err());
+        }
+
+        #[test]
+        fn new_with_enum() {
+            assert!(Kolor::new(KolorScheme::Dracula).is_ok());
+            assert!(Kolor::new(KolorScheme::Nord).is_ok());
+        }
+
+        #[test]
+        fn numbered_valid_range() {
+            let kolor = Kolor::new("dracula").unwrap();
+            for i in 0..=6 {
+                assert!(kolor.numbered("test", i).is_ok());
+            }
+        }
+
+        #[test]
+        fn numbered_out_of_range() {
+            let kolor = Kolor::new("dracula").unwrap();
+            let err = kolor.numbered("test", 7).unwrap_err();
+            assert_eq!(err.number(), 7);
+
+            let err = kolor.numbered("test", 100).unwrap_err();
+            assert_eq!(err.number(), 100);
+        }
+
+        #[test]
+        fn random_returns_kolored_text() {
+            let kolor = Kolor::new("dracula").unwrap();
+            let output = kolor.random("test").to_string();
+            assert!(output.starts_with("\x1b[38;2;"));
+            assert!(output.ends_with("\x1b[0m"));
+        }
+    }
+
+    mod kolored_text {
+        use super::*;
+
+        #[test]
+        fn format_includes_ansi_codes() {
+            let kolor = Kolor::new("catppuccin mocha").unwrap();
+            let output = kolor.red("hello").to_string();
+
+            assert!(output.starts_with("\x1b[38;2;"));
+            assert!(output.ends_with("\x1b[0m"));
+            assert!(output.contains("hello"));
+        }
+
+        #[test]
+        fn kolorize_with_rgb_values() {
+            let output = Kolor::kolorize("test", (255, 128, 0)).to_string();
+            assert!(output.contains("255;128;0"));
+        }
+
+        #[test]
+        fn each_color_method_works() {
+            let kolor = Kolor::new("dracula").unwrap();
+
+            assert!(kolor.red("x").to_string().contains("255;85;85"));
+            assert!(kolor.purple("x").to_string().contains("189;147;249"));
+            assert!(kolor.blue("x").to_string().contains("139;233;253"));
+            assert!(kolor.green("x").to_string().contains("80;250;123"));
+            assert!(kolor.orange("x").to_string().contains("255;184;108"));
+            assert!(kolor.yellow("x").to_string().contains("241;250;140"));
+            assert!(kolor.text("x").to_string().contains("248;248;242"));
+        }
     }
 }

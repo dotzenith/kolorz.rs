@@ -33,7 +33,6 @@ impl InvalidHexCodeError {
         Self { code: code.into() }
     }
 
-    /// Returns the invalid hex code
     pub fn code(&self) -> &str {
         &self.code
     }
@@ -59,7 +58,6 @@ impl InvalidColorNumberError {
         Self { number }
     }
 
-    /// Returns the invalid color number
     pub fn number(&self) -> usize {
         self.number
     }
