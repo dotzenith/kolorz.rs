@@ -66,16 +66,15 @@ fn main() {
 ### ❖ Kustom Kolorz are also available
 
 ```rust
-// custom kolorz from hex
+// If the hex code is invalid, the text will not be colored
 use kolorz::HexKolorize;
 
 fn main() {
-    println!("{}", "This is peach".kolorize("#fab387").expect("Invalid hex color"));
+    println!("{}", "This is peach".kolorize("#fab387"));
 }
 ```
 
 ```rust
-// custom kolorz from RGB
 use kolorz::RGBKolorize;
 
 fn main() {

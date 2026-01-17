@@ -23,29 +23,6 @@ impl fmt::Display for UnknownKolorSchemeError {
 
 impl std::error::Error for UnknownKolorSchemeError {}
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct InvalidHexCodeError {
-    code: String,
-}
-
-impl InvalidHexCodeError {
-    pub fn new(code: impl Into<String>) -> Self {
-        Self { code: code.into() }
-    }
-
-    pub fn code(&self) -> &str {
-        &self.code
-    }
-}
-
-impl fmt::Display for InvalidHexCodeError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "invalid hex color code: '{}'", self.code)
-    }
-}
-
-impl std::error::Error for InvalidHexCodeError {}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct InvalidColorNumberError {
     number: usize,

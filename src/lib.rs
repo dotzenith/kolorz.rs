@@ -53,15 +53,15 @@
 //! ## Kustom Kolorz are also available
 //!
 //! ```rust
+//! // If the hex code is invalid, the text will not be colored
 //! use kolorz::HexKolorize;
 //!
 //! fn main() {
-//!     println!("{}", "This is peach".kolorize("#fab387").expect("Invalid Hex"));
+//!     println!("{}", "This is peach".kolorize("#fab387"));
 //! }
 //! ```
 //!
 //! ```rust
-//! // custom kolorz from RGB
 //! use kolorz::RGBKolorize;
 //!
 //! fn main() {
@@ -73,7 +73,7 @@ pub mod errors;
 pub mod hex;
 pub mod rgb;
 
-pub use errors::{InvalidColorNumberError, InvalidHexCodeError, UnknownKolorSchemeError};
+pub use errors::{InvalidColorNumberError, UnknownKolorSchemeError};
 pub use hex::HexKolorize;
 use rand::Rng;
 pub use rgb::RGBKolorize;
@@ -370,29 +370,33 @@ impl Kolor {
 #[derive(Clone, Debug)]
 pub struct KoloredText {
     text: String,
-    color: RGB,
+    color: Option<RGB>,
 }
 
 impl KoloredText {
     pub fn new(text: String, color: RGB) -> Self {
-        KoloredText { text, color }
+        KoloredText {
+            text,
+            color: Some(color),
+        }
+    }
+
+    pub fn uncolored(text: String) -> Self {
+        KoloredText { text, color: None }
     }
 }
 
 impl Display for KoloredText {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if colors_enabled() {
-            // Write prefix, text, suffix separately to avoid formatting issues
-            write!(
-                f,
-                "\x1b[38;2;{};{};{}m",
-                self.color.0, self.color.1, self.color.2
-            )?;
-            self.text.fmt(f)?;
-            f.write_str("\x1b[0m")
-        } else {
-            self.text.fmt(f)
+        if let Some(color) = self.color {
+            if colors_enabled() {
+                // Write prefix, text, suffix separately to avoid formatting issues
+                write!(f, "\x1b[38;2;{};{};{}m", color.0, color.1, color.2)?;
+                self.text.fmt(f)?;
+                return f.write_str("\x1b[0m");
+            }
         }
+        self.text.fmt(f)
     }
 }
 
