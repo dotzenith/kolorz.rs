@@ -85,7 +85,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-1.0.0 - New, Stable API with support for `CLICOLOR` and friends
+1.1.0 - Remove `Result` for `HexKolorize`
 
 ---
 
