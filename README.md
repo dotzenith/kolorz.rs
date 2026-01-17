@@ -15,7 +15,7 @@ Add kolorz to your project's `Cargo.toml`:
 
 ```toml
 [dependencies]
-kolorz = "1.0.0"
+kolorz = "1.1.0"
 ```
 
 ---
