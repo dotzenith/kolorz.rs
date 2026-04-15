@@ -75,7 +75,7 @@ pub mod rgb;
 
 pub use errors::{InvalidColorNumberError, UnknownKolorSchemeError};
 pub use hex::HexKolorize;
-use rand::Rng;
+use rand::RngExt;
 pub use rgb::RGBKolorize;
 use std::fmt::Display;
 use std::io::IsTerminal;
@@ -314,9 +314,9 @@ impl Kolor {
         KoloredText::new(text.to_string(), color)
     }
     pub fn random(&self, text: impl std::fmt::Display) -> KoloredText {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        match rng.gen_range(0..=6) as usize {
+        match rng.random_range(0..=6) as usize {
             0 => self.red(text),
             1 => self.purple(text),
             2 => self.blue(text),

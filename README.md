@@ -85,7 +85,7 @@ fn main() {
 ---
 
 ### ❖ What's New? 
-1.1.0 - Remove `Result` for `HexKolorize`
+1.1.1 - Update `rand`
 
 ---
 
